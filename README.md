@@ -50,15 +50,21 @@ print(guojia_list)
 guojia_list_unique = list(set(guojia_list)) #去重复的学科，放在list列表里面
 print("共现的gj类别数量有：",len(guojia_list_unique))
 #web of science上边导出的学科包含二级学科，如果想用一级学科的话需要替换学科名，把逗号后边的二级删掉
-guojia_frame = pd.DataFrame(np.zeros([len(guojia_list_unique),len(guojia_list_unique)]),columns=guojia_list_unique,index=guojia_list_unique)#构建了都是0的矩阵
-guojia_frame.to_excel("/Users/weirdchun/Downloads/gjcooc.xlsx")#导成Excel格式
+guojia_frame = pd.DataFrame(np.zeros([len(guojia_list_unique),len(guojia_list_unique)]),columns=guojia_list_unique,index=guojia_list_unique)#构建了行名和列名为国家但是数值为0的矩阵
 print(type(df_gj))
+print(df_gj[1])
 df_gj=DataFrame(df_gj) #把list变成DataFrame格式,才能继续下面的操作
-for gj in df_gj.C1:   #从原始表里面遍历每列数据
+for gj in df_gj.C1:   #从原始表里面遍历每列数据  第2遍的时候，gj:['Australia','Australia']
     if gj != null:  #排除null元素，否则要报错
-        for i in range(len(gj)-1):     #第一遍，范围0到0，取i=0 ；第2遍，范围从0-1
-            for j in range(i+1,len(gj)): #第一遍，从1到1，j=1；第2遍，范围从1-2
-                guojia_frame.loc[[gj[i]],[gj[j]]]=guojia_frame.loc[[gj[i]],[gj[j]]]+1 #往矩阵加数据   定位位置loc[行，列] 然后 +1
+        for i in range(len(gj)-1):     #如，gj:['Australia','Australia','Japan'],即"i"范围为[0,3),取0，1，2；即重复3次
+            for j in range(i+1,len(gj)): #如，gj:['Australia','Australia','Japan'],即"j"范围为[1,3),取1，2；即重复2次
+                guojia_frame.loc[[gj[i]],[gj[j]]]=guojia_frame.loc[[gj[i]],[gj[j]]]+1 #往矩阵加数据
+                # 如，gj:['Australia','Australia','Japan']，即guojia_frame.loc[[gj[0]],[gj[1]]]=guojia_frame.loc[[gj[0]],[gj[1]]]+1
+                #实际上就是说明，Australia与Australia共现了，在dataframe表上找到行为Australia，列为Australia的位置，然后加1
+                #然后变成guojia_frame.loc[[gj[0]],[gj[2]]]=guojia_frame.loc[[gj[0]],[gj[2]]]+1
+                #再然后变成guojia_frame.loc[[gj[1]],[gj[1]]]=guojia_frame.loc[[gj[1]],[gj[1]]]+1，以此类推
+                #[0,1],[0,2],[0,3]遍历完后再遍历[1,1],[1,2],[1,3],以此类推来实现共现
+
 guojia_frame.to_excel("/Users/weirdchun/Downloads/GJcooc.xlsx")#导成Excel格式
 print("excel ok")
 ```
