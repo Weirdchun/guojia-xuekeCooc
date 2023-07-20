@@ -1,5 +1,6 @@
 使用Citespace软件，wos论文需要纯文本格式，知网论文需要Refworks。
-使用Vosviewer软件，wos论文需要制表符分隔文件（tab）。
+
+使用Vosviewer，Circos.ca软件，wos论文需要制表符分隔文件（tab）。
 
 # 国家共现
 使用场景，用到Circos.ca网站分析Wos论文国家字段
