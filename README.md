@@ -68,3 +68,49 @@ for gj in df_gj.C1:   #从原始表里面遍历每列数据  第2遍的时候，
 guojia_frame.to_excel("/Users/weirdchun/Downloads/GJcooc.xlsx")#导成Excel格式
 print("excel ok")
 ```
+
+学科共现
+```
+import os
+import pandas as pd
+import numpy as np
+import networkx as nx
+#import matplotlib.pyplot as plt
+os.chdir('D:/software/0install package/VOSviewer/WOS_co_occurrence0304')
+
+data = pd.read_table("WOS tab0304_utf8.txt",sep="	",index_col=False)
+df_wc = data[data.WC.str.contains('; ')] #筛选包含分隔符的数据，web of science是分号+空格,只有有分割符才代表是出现了两个及以上学科
+print(len(data))
+print(len(df_wc))#对比两个数字查看比例，大部分论文(接近50%)只有一个学科，所以学科共现不一定有意义
+
+xueke_list = []
+for wc in df_wc.WC:
+    wc_list = wc.split("; ")
+    xueke_list.extend(wc_list)
+xueke_list_unique = list(set(xueke_list))
+print(len(xueke_list_unique))
+
+xueke_list_unique#web of science上边导出的学科包含二级学科，如果想用一级学科的话需要替换学科名，把逗号后边的二级删掉
+
+xueke_frame = pd.DataFrame(np.zeros([len(xueke_list_unique),len(xueke_list_unique)]),columns=xueke_list_unique,index=xueke_list_unique)
+for wc in df_wc.WC:
+    wc_list = wc.split('; ')
+    for i in range(len(wc_list)-1):
+        #xueke_frame.loc[wc_list[i]][wc_list[i+1]]=xueke_frame.loc[wc_list[i]][wc_list[i+1]]+1
+        for j in range(i+1,len(wc_list)):
+            xueke_frame.loc[wc_list[i]][wc_list[j]]=xueke_frame.loc[wc_list[i]][wc_list[j]]+1
+
+for k in range(len(xueke_frame)):#对角线都为0
+    xueke_frame.iloc[k,k]=0
+
+g = nx.Graph()
+for i in range(len(xueke_list_unique)-1):
+    xueke = xueke_list_unique[i]
+    for j in range(i+1,len(xueke_list_unique)):
+        w=0
+        xueke2 = xueke_list_unique[j]
+        w = xueke_frame.loc[xueke][xueke2]+xueke_frame.loc[xueke2][xueke]
+        g.add_edge(xueke,xueke2,weight=w)
+nx.write_pajek(g,"D:/software/0install package/VOSviewer/web tab.net")
+
+
