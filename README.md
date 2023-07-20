@@ -1,3 +1,4 @@
+# 国家共现
 使用场景，用到Circos.ca网站分析Wos论文国家字段
 
 1.在wos网站中找到要分析的论文，导出Tab分隔符格式
@@ -68,8 +69,7 @@ for gj in df_gj.C1:   #从原始表里面遍历每列数据  第2遍的时候，
 guojia_frame.to_excel("/Users/weirdchun/Downloads/GJcooc.xlsx")#导成Excel格式
 print("excel ok")
 ```
-
-学科共现
+# 学科共现
 ```
 import os
 import pandas as pd
